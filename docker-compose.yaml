@@ -1,0 +1,71 @@
+version: '3'
+services:
+  config-service:
+    image: config-service
+    build:
+      context: ./config-service
+    ports:
+      - "8081:8081"
+    networks:
+      - microservices-net
+
+  eureka-service:
+    image: eureka-service
+    build:
+      context: ./eureka-service
+    environment:
+      - SPRING_CLOUD_CONFIG_URI=http://config-service:8081
+    ports:
+      - "8761:8761"
+    networks:
+      - microservices-net
+
+  gateway-service:
+    image: gateway-service
+    build:
+      context: ./gateway-service
+    environment:
+      - SPRING_CLOUD_CONFIG_URI=http://config-service:8081
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-service:8761/eureka/
+    ports:
+      - "8080:8080"
+    depends_on:
+      - config-service
+      - auth-service
+      - eureka-service
+    networks:
+      - microservices-net
+
+  auth-service:
+    image: auth-service
+    build:
+      context: ./auth-service
+    environment:
+      - SPRING_CLOUD_CONFIG_URI=http://config-service:8081
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-service:8761/eureka/
+    ports:
+      - "8082:8082"
+    depends_on:
+      - config-service
+      - eureka-service
+    networks:
+      - microservices-net
+
+  message-service:
+    image: message-service
+    build:
+      context: ./message-service
+    environment:
+      - SPRING_CLOUD_CONFIG_URI=http://config-service:8081
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-service:8761/eureka/
+    ports:
+      - "8083:8083"
+    depends_on:
+      - config-service
+      - eureka-service
+    networks:
+      - microservices-net
+
+networks:
+  microservices-net:
+    driver: bridge

@@ -1,0 +1,12 @@
+server:
+  port: 8081
+spring:
+  cloud:
+    config:
+      server:
+        git:
+          default-label: main
+          uri: https://github.com/diegoismael81/devops-demo
+          search-paths: services-config
+  application:
+    name: config-service

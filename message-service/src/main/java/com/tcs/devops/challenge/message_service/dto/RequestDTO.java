@@ -1,0 +1,18 @@
+package com.tcs.devops.challenge.message_service.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class RequestDTO {
+    private String message;
+    private String to;
+    private String from;
+    private int timeToLifeSec;
+    
+}
