@@ -79,14 +79,16 @@ jobs:
     steps:
       - name: Update deployment file
         run: |
-          sed -i "s|image: .*|image: ${{ secrets.REGISTRY_NAME }}/${{ matrix.service }}:latest|" k8s/${{ matrix.service }}.yml
+          sed -i "s|image: .*|image: ${{ secrets.REGISTRY_NAME }}/${{ matrix.service }}:latest|" $GITHUB_WORKSPACE/k8s/${{ matrix.service }}.yml
 
-      
+      - name: List files in k8s directory
+        run: ls -la $GITHUB_WORKSPACE/k8s
+          
       - name: Save DigitalOcean kubeconfig with short-lived credentials
         run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 ${{ secrets.CLUSTER_NAME }}
 
       - name: Deploy to DigitalOcean Kubernetes
-        run: kubectl apply -f k8s/${{ matrix.service }}.yml
+        run: kubectl apply -f $GITHUB_WORKSPACE/k8s/${{ matrix.service }}.yml
 
       - name: Verify deployment
         run: kubectl rollout status deployment/${{ matrix.service }}
