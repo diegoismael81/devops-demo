@@ -33,14 +33,21 @@ jobs:
       - name: Build with Maven
         run: mvn clean package -f ${{ matrix.service }}/pom.xml
 
-      - name: Login to DockerHub Registry
-        run: echo ${{ secrets.DOCKER_TOKEN }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+      # Install doctl.
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITAL_OCEAN_ACCESS_TOKEN }}
 
-      - name: Build Docker image
-        run: docker build -t diegoismael/${{ matrix.service }}:latest -f ${{ matrix.service }}/Dockerfile ${{ matrix.service }}
+      # Build a Docker image of your application in your registry and tag the image with the $GITHUB_SHA.
+      - name: Build container image
+        run: docker build -t ${{ secrets.REGISTRY_NAME }}/${{ matrix.service }}:$(echo $GITHUB_SHA | head -c7) .
 
-      - name: Push Docker image
-        run: docker push diegoismael/${{ matrix.service }}:latest
+      - name: Log in to DigitalOcean Container Registry with short-lived credentials
+        run: doctl registry login --expiry-seconds 1200
+
+      - name: Push image to DigitalOcean Container Registry
+        run: docker push ${{ secrets.REGISTRY_NAME }}/python-example:$(echo $GITHUB_SHA | head -c7)      
 
   test:
     runs-on: ubuntu-latest
@@ -70,12 +77,7 @@ jobs:
         run: |
           echo "${{ secrets.KUBE_CONFIG }}" > kubeconfig
           export KUBECONFIG=kubeconfig
-      
-      - name: Check Kubernetes Context
-        run: |
-          kubectl config use-context do-nyc1-k8s-1-31-1-do-3-nyc1-1728945219118
-          kubectl cluster-info
-      
+                  
       - name: Deploy to Kubernetes
         run: |
           kubectl apply -f k8s/ --validate=false
