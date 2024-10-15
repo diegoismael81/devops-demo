@@ -23,7 +23,7 @@ spec:
       - name: eureka-service
         image: <IMAGE>
         ports:
-        - containerPort: 8081
+        - containerPort: 8761
         env:
         - name: SPRING_CLOUD_CONFIG_URI
           value: "http://config-http-service:8081"
@@ -42,7 +42,7 @@ spec:
   ports:
     - name: http
       protocol: TCP
-      port: 8081
-      targetPort: 8081
+      port: 8761
+      targetPort: 8761
   selector:
     app: eureka-service
