@@ -149,6 +149,7 @@ jobs:
     strategy:
       matrix:
         service: 
+          - auth-service
           - message-service
           
     needs: deploy_gateway_service
