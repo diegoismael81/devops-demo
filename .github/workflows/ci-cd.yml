@@ -33,7 +33,6 @@ jobs:
       - name: Build with Maven
         run: mvn clean package -f ${{ matrix.service }}/pom.xml
 
-      # Install doctl.
       - name: Install doctl
         uses: digitalocean/action-doctl@v2
         with:
@@ -85,6 +84,11 @@ jobs:
         run: |
           sed -i 's|<IMAGE>|${{ secrets.REGISTRY_NAME }}/${{ matrix.service }}:latest|' $GITHUB_WORKSPACE/k8s/${{ matrix.service }}.yml
           
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+            token: ${{ secrets.DIGITAL_OCEAN_ACCESS_TOKEN }}
+      
       - name: Save DigitalOcean kubeconfig with short-lived credentials
         run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 ${{ secrets.CLUSTER_NAME }}
 
