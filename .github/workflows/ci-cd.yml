@@ -71,6 +71,7 @@ jobs:
         service: 
           - config-service
           - eureka-service
+          - gateway-service
           
     needs: test
     steps:

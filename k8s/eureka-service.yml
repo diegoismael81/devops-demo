@@ -26,7 +26,7 @@ spec:
         - containerPort: 8081
         env:
         - name: SPRING_CLOUD_CONFIG_URI
-          value: "http://165.227.253.161:8081"
+          value: "http://config-http-service:8081"
         resources:
           requests:
             cpu: 100m
@@ -36,7 +36,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: eureka-service-service
+  name: eureka-http-service
 spec:
   type: ClusterIP
   ports:
