@@ -32,7 +32,10 @@ jobs:
 
       - name: Build with Maven
         run: mvn clean package -f ${{ matrix.service }}/pom.xml
-
+      
+      - name: Build container image
+        run: docker build -t ${{ secrets.REGISTRY_NAME }}/${{ matrix.service }}:latest -f ${{ matrix.service }}/Dockerfile ${{ matrix.service }}
+      
   test:
     runs-on: ubuntu-latest
     needs: build
@@ -62,13 +65,7 @@ jobs:
           - message-service
     runs-on: ubuntu-latest
     needs: test
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-    
-      - name: Build container image
-        run: docker build -t ${{ secrets.REGISTRY_NAME }}/${{ matrix.service }}:latest -f ${{ matrix.service }}/Dockerfile ${{ matrix.service }}
-      
+    steps:      
       - name: Install doctl
         uses: digitalocean/action-doctl@v2
         with:
