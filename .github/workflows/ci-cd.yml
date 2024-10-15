@@ -70,7 +70,12 @@ jobs:
         run: |
           echo "${{ secrets.KUBE_CONFIG }}" > kubeconfig
           export KUBECONFIG=kubeconfig
-
+      
+      - name: Check Kubernetes Context
+        run: |
+          kubectl config use-context do-nyc1-k8s-1-31-1-do-3-nyc1-1728945219118
+          kubectl cluster-info
+      
       - name: Deploy to Kubernetes
         run: |
           kubectl apply -f k8s/ --validate=false
