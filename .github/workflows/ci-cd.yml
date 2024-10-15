@@ -65,94 +65,19 @@ jobs:
         run: mvn test -f message-service/pom.xml
       
     
-  deploy_config_service:
-    if: github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
-    needs: test
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-      
-      - name: Update deployment file
-        run: |
-          sed -i 's|<IMAGE>|${{ secrets.REGISTRY_NAME }}/config-service:latest|' $GITHUB_WORKSPACE/k8s/config-service.yml
-          
-      - name: Install doctl
-        uses: digitalocean/action-doctl@v2
-        with:
-            token: ${{ secrets.DIGITAL_OCEAN_ACCESS_TOKEN }}
-      
-      - name: Save DigitalOcean kubeconfig with short-lived credentials
-        run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 ${{ secrets.CLUSTER_NAME }}
-
-      - name: Deploy to DigitalOcean Kubernetes
-        run: kubectl apply -f $GITHUB_WORKSPACE/k8s/config-service.yml
-
-      - name: Verify deployment
-        run: kubectl rollout status deployment/config-service
-
-  deploy_eureka_service:
-    if: github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
-    needs: deploy_config_service
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-      
-      - name: Update deployment file
-        run: |
-          sed -i 's|<IMAGE>|${{ secrets.REGISTRY_NAME }}/eureka-service:latest|' $GITHUB_WORKSPACE/k8s/eureka-service.yml
-          
-      - name: Install doctl
-        uses: digitalocean/action-doctl@v2
-        with:
-            token: ${{ secrets.DIGITAL_OCEAN_ACCESS_TOKEN }}
-      
-      - name: Save DigitalOcean kubeconfig with short-lived credentials
-        run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 ${{ secrets.CLUSTER_NAME }}
-
-      - name: Deploy to DigitalOcean Kubernetes
-        run: kubectl apply -f $GITHUB_WORKSPACE/k8s/eureka-service.yml
-
-      - name: Verify deployment
-        run: kubectl rollout status deployment/eureka-service
-  
-  deploy_gateway_service:
-    if: github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest          
-    needs: deploy_eureka_service
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-      
-      - name: Update deployment file
-        run: |
-          sed -i 's|<IMAGE>|${{ secrets.REGISTRY_NAME }}/gateway-service:latest|' $GITHUB_WORKSPACE/k8s/gateway-service.yml
-          
-      - name: Install doctl
-        uses: digitalocean/action-doctl@v2
-        with:
-            token: ${{ secrets.DIGITAL_OCEAN_ACCESS_TOKEN }}
-      
-      - name: Save DigitalOcean kubeconfig with short-lived credentials
-        run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 ${{ secrets.CLUSTER_NAME }}
-
-      - name: Deploy to DigitalOcean Kubernetes
-        run: kubectl apply -f $GITHUB_WORKSPACE/k8s/gateway-service.yml
-
-      - name: Verify deployment
-        run: kubectl rollout status deployment/gateway-service
-
-  deploy_services:
+  deploy:
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     strategy:
       matrix:
         service: 
+          - config-service
+          - eureka-service
+          - gateway-service
           - auth-service
           - message-service
           
-    needs: deploy_gateway_service
+    needs: test
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
