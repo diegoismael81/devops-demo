@@ -2,11 +2,18 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: config-service
+  labels:
+    app: config-service
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: config-service
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  minReadySeconds: 5
   template:
     metadata:
       labels:
@@ -14,19 +21,25 @@ spec:
     spec:
       containers:
       - name: config-service
-        image: <IMAGE> 
+        image: <IMAGE>
         ports:
         - containerPort: 8081
-        
+        resources:
+          requests:
+            cpu: 100m
+          limits:
+            cpu: 100m
+---
 apiVersion: v1
 kind: Service
 metadata:
-  name: config-service
+  name: config-service-service
 spec:
-  type: ClusterIP
-  selector:
-    app: config-service
+  type: LoadBalancer
   ports:
-    - protocol: TCP
+    - name: http
+      protocol: TCP
       port: 8081
       targetPort: 8081
+  selector:
+    app: config-service
