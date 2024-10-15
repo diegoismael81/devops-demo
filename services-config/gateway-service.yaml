@@ -15,12 +15,12 @@ spring:
         locator:
           enabled: true
       routes:      
-        - id: auth-http-service
-          uri: lb://auth-http-service
+        - id: auth-service
+          uri: lb://auth-service
           predicates:
             - Path=/auth/**
-        - id: message-http-service
-          uri: lb://message-http-service
+        - id: message-service
+          uri: lb://message-service
           predicates:
             - Path=/**
           filters:
