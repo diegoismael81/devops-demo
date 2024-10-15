@@ -26,9 +26,9 @@ spec:
         - containerPort: 8082
         env:
         - name: SPRING_CLOUD_CONFIG_URI
-          value: "http://config-http-service:8081"
+          value: "http://config-service:8081"
         - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
-          value: "http://eureka-http-service:8761/eureka"
+          value: "http://eureka-service:8761/eureka"
         resources:
           requests:
             cpu: 100m
@@ -38,7 +38,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: auth-http-service
+  name: auth-service
 spec:
   type: ClusterIP
   ports:
