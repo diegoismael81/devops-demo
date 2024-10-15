@@ -67,16 +67,25 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: 
+          - config-service
+          - eureka-service
+          - gateway-service
+          - auth-service
+          - message-service
     needs: test
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - name: Update deployment file
+        run: sed -i 's|<IMAGE>|${{ secrets.REGISTRY_NAME }}/${{ matrix.service }}:latest|' $GITHUB_WORKSPACE/k8s/${{ matrix.service }}.yml
 
-      - name: Configure Kubernetes
-        run: |
-          echo "${{ secrets.KUBE_CONFIG }}" > kubeconfig
-          export KUBECONFIG=kubeconfig
-                  
-      - name: Deploy to Kubernetes
-        run: |
-          kubectl apply -f k8s/ --validate=false
+
+      - name: Save DigitalOcean kubeconfig with short-lived credentials
+        run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 ${{ secrets.CLUSTER_NAME }}
+
+      - name: Deploy to DigitalOcean Kubernetes
+        run: kubectl apply -f $GITHUB_WORKSPACE/k8s/${{ matrix.service }}.yml
+
+      - name: Verify deployment
+        run: kubectl rollout status deployment/${{ matrix.service }}
