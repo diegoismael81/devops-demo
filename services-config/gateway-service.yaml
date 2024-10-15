@@ -4,7 +4,7 @@ server:
 eureka:
   client:
     service-url:
-      defaultZone: http://eureka-service:8761/eureka/
+      defaultZone: http://eureka-http-service:8761/eureka/
     fetch-registry: true
     register-with-eureka: true
 
@@ -16,11 +16,11 @@ spring:
           enabled: true
       routes:      
         - id: auth-service
-          uri: lb://auth-service
+          uri: lb://auth-http-service
           predicates:
             - Path=/auth/**
         - id: message-service
-          uri: lb://message-service
+          uri: lb://message-http-service
           predicates:
             - Path=/**
           filters:
