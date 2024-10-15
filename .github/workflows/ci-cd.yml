@@ -37,10 +37,10 @@ jobs:
         run: echo ${{ secrets.DOCKER_TOKEN }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
 
       - name: Build Docker image
-        run: docker build -t diegoismael/${{ matrix.service }} -f ${{ matrix.service }}/Dockerfile .
+        run: docker build -t diegoismael/${{ matrix.service }}:latest -f ${{ matrix.service }}/Dockerfile ${{ matrix.service }}
 
       - name: Push Docker image
-        run: docker push diegoismael/${{ matrix.service }}
+        run: docker push diegoismael/${{ matrix.service }}:latest
 
   test:
     runs-on: ubuntu-latest
