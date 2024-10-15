@@ -45,14 +45,6 @@ jobs:
   test:
     runs-on: ubuntu-latest
     needs: build_and_push
-    strategy:
-      matrix:
-        service: 
-          - config-service
-          - eureka-service
-          - gateway-service
-          - auth-service
-          - message-service
 
     steps:
       - name: Checkout code
