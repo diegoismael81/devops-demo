@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: message-service
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: message-service
+  template:
+    metadata:
+      labels:
+        app: message-service
+    spec:
+      containers:
+      - name: message-service
+        image: usuario/message-service:latest
+        ports:
+        - containerPort: 8083
+        env:
+        - name: SPRING_CLOUD_CONFIG_URI
+          value: "http://config-service:8081"
+        - name: EUREKA_CLIENT_SERVICEURL_DEFAULTZONE
+          value: "http://eureka-service:8761/eureka/"
+          
+apiVersion: v1
+kind: Service
+metadata:
+  name: message-service
+spec:
+  type: ClusterIP
+  selector:
+    app: message-service
+  ports:
+    - protocol: TCP
+      port: 8083
+      targetPort: 8083
