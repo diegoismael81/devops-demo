@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: message-service
-        image: message-service:latest
+        image: <IMAGE>
         ports:
         - containerPort: 8083
         env:

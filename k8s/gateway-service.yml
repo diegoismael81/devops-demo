@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: gateway-service
-        image: gateway-service:latest
+        image: <IMAGE>
         ports:
         - containerPort: 8080
         env:

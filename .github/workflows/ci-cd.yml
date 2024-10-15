@@ -75,14 +75,15 @@ jobs:
           - gateway-service
           - auth-service
           - message-service
+    
     needs: test
     steps:
-      - name: List files in k8s directory
-        run: ls -la $GITHUB_WORKSPACE/k8s
+      - name: Checkout code
+        uses: actions/checkout@v2
       
       - name: Update deployment file
         run: |
-          sed -i "s|image: .*|image: ${{ secrets.REGISTRY_NAME }}/${{ matrix.service }}:latest|" $GITHUB_WORKSPACE/k8s/${{ matrix.service }}.yml
+          sed -i 's|<IMAGE>|${{ secrets.REGISTRY_NAME }}/${{ matrix.service }}:latest|' $GITHUB_WORKSPACE/k8s/${{ matrix.service }}.yml
           
       - name: Save DigitalOcean kubeconfig with short-lived credentials
         run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 ${{ secrets.CLUSTER_NAME }}
