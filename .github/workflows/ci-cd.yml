@@ -88,7 +88,7 @@ jobs:
         run: kubectl apply -f $GITHUB_WORKSPACE/k8s/config-service.yml
 
       - name: Verify deployment
-        run: kubectl rollout status deployment/config-http-service
+        run: kubectl rollout status deployment/config-service
 
   deploy_eureka_service:
     if: github.ref == 'refs/heads/main'
@@ -114,7 +114,7 @@ jobs:
         run: kubectl apply -f $GITHUB_WORKSPACE/k8s/eureka-service.yml
 
       - name: Verify deployment
-        run: kubectl rollout status deployment/eureka-http-service
+        run: kubectl rollout status deployment/eureka-service
   
   deploy_gateway_service:
     if: github.ref == 'refs/heads/main'
@@ -140,7 +140,7 @@ jobs:
         run: kubectl apply -f $GITHUB_WORKSPACE/k8s/gateway-service.yml
 
       - name: Verify deployment
-        run: kubectl rollout status deployment/gateway-http-service
+        run: kubectl rollout status deployment/gateway-service
 
   deploy_services:
     if: github.ref == 'refs/heads/main'
