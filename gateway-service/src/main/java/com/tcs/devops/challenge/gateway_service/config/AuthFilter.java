@@ -46,7 +46,7 @@ public class AuthFilter extends AbstractGatewayFilterFactory<AuthFilter.Config> 
 
             return webClient.build()
                     .post()
-                    .uri("http://auth-service/auth/validate?token=" + jwtToken)
+                    .uri("http://auth-service:8082/auth/validate?token=" + jwtToken)
                     .retrieve()
                     .bodyToMono(ResponseDTO.class)
                     .flatMap(response -> {
