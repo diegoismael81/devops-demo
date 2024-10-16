@@ -16,11 +16,11 @@ spring:
           enabled: true
       routes:      
         - id: auth-service
-          uri: lb://auth-service
+          uri: http://auth-service:8082
           predicates:
             - Path=/auth/**
         - id: message-service
-          uri: lb://message-service
+          uri: http://message-service:8083
           predicates:
             - Path=/**
           filters:
