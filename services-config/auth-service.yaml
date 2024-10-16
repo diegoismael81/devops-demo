@@ -2,7 +2,7 @@ server:
   port: 8082
 eureka:
   instance:
-    hostname: localhost
+    hostname: auth-service
   client:
     service-url:
       defaultZone: http://eureka-service:8761/eureka/

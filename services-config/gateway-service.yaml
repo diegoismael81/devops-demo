@@ -3,7 +3,7 @@ server:
   
 eureka:
   instance:
-    hostname: localhost
+    hostname: gateway-service
   client:
     service-url:
       defaultZone: http://eureka-service:8761/eureka/
